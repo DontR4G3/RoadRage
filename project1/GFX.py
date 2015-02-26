@@ -47,7 +47,7 @@ class Player:
         self.player_height = 40
         self.player_speed_x = 0
         self.player_speed_y = 0
-        self.move_speed = 1
+        self.move_speed = 3
         self.player_health = 100
 
         # FPS controllers (note start speed should always be 60 / 5 so, 1 / 300
@@ -70,12 +70,8 @@ class Player:
         self.player_rect.y = self.player_y
         self.update_size()
 
-        # friction
-        self.slowing_up = False
-        self.slowing_down = False
-
         # car current gear
-        self.car_gear = 1
+        self.car_gear = 3
 
         # screen text
         self.my_font = pygame.font.SysFont("Fixedsys", 30)
@@ -88,6 +84,7 @@ class Player:
 
         # score
         self.score = 0
+        self.wave = 1
 
         # deer ai
         self.deer_sprite_x = 0 # same for all deers
@@ -101,7 +98,6 @@ class Player:
         # sounds
         self.growl = pygame.mixer.Sound("Sounds\\growl.wav")
         self.car_noise = pygame.mixer.Sound("Sounds\\car.wav")
-
 
     def exit(self):
         pygame.quit()
@@ -256,9 +252,11 @@ class Player:
         label = self.my_font.render("Gear " + str(self.car_gear), 1, self.white)
         label2 = self.my_font.render("<3 " + str(self.player_health), 1, self.health_color)
         label3 = self.my_font.render("Score " + str(self.score), 1, self.white)
+        label4 = self.my_font.render("Wave " + str(self.wave), 1, self.white)
         self.game_display.blit(label, (0, 0))
         self.game_display.blit(label2, (0, 50))
         self.game_display.blit(label3, (0, 100))
+        self.game_display.blit(label4, (0, 150))
 
     def deer_update(self):
         # sprite sheet control
@@ -282,6 +280,7 @@ class Player:
         # check if they are off screen and upgrade difficulty
         # NOTE: when total deers increases you need to recall init_pos to not receive an error
         if self.deer_y > 625:
+            self.wave += 1
             self.difficulty()
             self.deer_y = -25
             self.deers_x = AiDeer.init_pos(self.deers)
@@ -451,8 +450,6 @@ class Menu:
         self.movie.set_display(self.movie_screen)
         self.movie_x = 800
         self.movie_y = 800
-
-
 
     def menu_loop(self):
         while self.menu_running:
